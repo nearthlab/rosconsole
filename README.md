@@ -13,3 +13,10 @@ make
 echo "source $HOME/rosconsole/build/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```
+
+그리고 아래와 같이 rospy logging module을 ros 디렉토리로 복사해주세요
+```
+cd ~/rosconsole
+sudo rm /opt/ros/kinetic/lib/python2.7/dist-packages/rosgraph/roslogging.pyc
+sudo cp roslogging.py /opt/ros/kinetic/lib/python2.7/dist-packages/rosgraph/roslogging.py
+```
