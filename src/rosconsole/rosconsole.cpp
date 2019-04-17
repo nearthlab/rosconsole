@@ -42,6 +42,7 @@
 #include <boost/shared_array.hpp>
 #include <boost/regex.hpp>
 #include <boost/make_shared.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <cstdarg>
 #include <cstdlib>
@@ -184,6 +185,17 @@ struct TimeToken : public Token
   virtual std::string getString(void*, ::ros::console::Level, const char*, const char*, const char*, int)
   {
     std::stringstream ss;
+    boost::posix_time::ptime iso_time(boost::posix_time::second_clock::local_time());
+    ss << boost::posix_time::to_iso_extended_string(iso_time);
+    return ss.str();
+  }
+};
+
+struct UnixTimeToken : public Token
+{
+  virtual std::string getString(void*, ::ros::console::Level, const char*, const char*, const char*, int)
+  {
+    std::stringstream ss;
     ss << ros::WallTime::now();
     if (ros::Time::isValid() && ros::Time::isSimTime())
     {
@@ -193,7 +205,7 @@ struct TimeToken : public Token
   }
 };
 
-struct WallTimeToken : public Token
+struct UnixWallTimeToken : public Token
 {
   virtual std::string getString(void*, ::ros::console::Level, const char*, const char*, const char*, int)
   {
@@ -266,10 +278,15 @@ TokenPtr createTokenFromType(const std::string& type)
   {
     return TokenPtr(boost::make_shared<TimeToken>());
   }
-  else if (type == "walltime")
+  else if (type == "unixtime")
   {
-    return TokenPtr(boost::make_shared<WallTimeToken>());
+    return TokenPtr(boost::make_shared<UnixTimeToken>());
   }
+  else if (type == "unixwalltime")
+  {
+    return TokenPtr(boost::make_shared<UnixWallTimeToken>());
+  }
+
   else if (type == "thread")
   {
     return TokenPtr(boost::make_shared<ThreadToken>());
